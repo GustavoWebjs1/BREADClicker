@@ -1,0 +1,479 @@
+body {
+  background: linear-gradient(to bottom, #fff4e0, #f5d9a0);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #4e342e;
+  margin: 0;
+  padding: 30px;
+  height: 100vh;
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente o container principal */
+  align-items: flex-start; /* Alinha no topo da tela */
+}
+
+.container-principal {
+  display: flex;
+  flex-direction: row; /* Lado a lado */
+  width: 100%;
+  max-width: 1200px;
+  gap: 20px; /* Espaço entre as colunas */
+}
+
+/* Ranking - lado esquerdo */
+.area-ranking {
+  flex: 0 0 250px;
+  background-color: #d3b89f;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.area-ranking input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #d3b89f;
+  box-sizing: border-box;
+}
+
+.area-ranking button {
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #f4a261;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  width: 100%;
+  margin-bottom: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.area-ranking button:hover {
+  background-color: #e07b3e;
+}
+
+.area-ranking button:focus {
+  outline: 2px solid #e07b3e;
+  outline-offset: 2px;
+}
+
+.area-ranking ol {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+/* Área central - clique */
+.area-clique {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.paocontainer {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin-bottom: 10px;
+}
+
+.paocontainer img {
+  width: 220px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.paocontainer img:hover {
+  transform: scale(1.05);
+}
+
+.contador {
+  margin-top: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  background-color: #f4a261;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Carrossel de cursores */
+#carrossel {
+  position: relative;
+  width: 220px;
+  height: 40px;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 1px solid #d3b89f;
+  border-radius: 8px;
+  background-color: #f7c59f;
+  display: flex;
+  align-items: center;
+}
+
+.cursor-track {
+  display: flex;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 40px;
+  animation: slide 10s linear infinite;
+  white-space: nowrap;
+}
+
+.cursor-icon {
+  width: 30px;
+  height: 30px;
+  background: url(imagens/mouse-removebg-preview.png) no-repeat center center;
+  background-size: contain;
+  margin: 0 5px;
+  pointer-events: none;
+}
+
+@keyframes slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Painel direito - loja */
+.painel-direito {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #f7c59f;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.loja {
+  width: 100%;
+  border-bottom: 1px solid #d3b89f;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+
+  /* muda para coluna, empilhando verticalmente */
+  display: flex;
+  flex-direction: column; /* empilha elementos verticalmente */
+  align-items: flex-start; /* alinha à esquerda */
+  gap: 10px; /* espaço entre título, botão e descrição */
+  position: relative;
+}
+.loja:last-child {
+  border-bottom: none;
+}
+
+.loja h2 {
+  margin: 0; /* removi margin para alinhar */
+  font-size: 18px;
+  white-space: nowrap;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0; /* não encolhe */
+}
+
+.loja button {
+  background-color: #f7c59f;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.loja button:hover {
+  background-color: #f4a261;
+}
+
+/* Esconde descrição inicialmente */
+.descricao-loja {
+  font-size: 14px;
+  color: #6b4c3b;
+  font-style: italic;
+  line-height: 1.3;
+  user-select: none;
+
+  /* escondido por padrão */
+  opacity: 0;
+  visibility: hidden;
+
+  /* posição relativa para o alinhamento */
+  position: absolute;
+  left: 100%; /* posiciona do lado direito da loja */
+  top: 50%;
+  transform: translateY(-50%);
+  background: #f7c59f;
+  border: 1px solid #d3b89f;
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: 220px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 10;
+}
+
+/* Ao passar o mouse no container .loja mostra a descrição */
+.loja:hover .descricao-loja {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Adiciona emojis nos títulos das lojas */
+.loja:nth-child(1) h2::before { content: "🖱️ "; }
+.loja:nth-child(2) h2::before { content: "🔥 "; }
+.loja:nth-child(3) h2::before { content: "🥖 "; }
+.loja:nth-child(4) h2::before { content: "🏭 "; }
+.loja:nth-child(5) h2::before { content: "👑 "; }
+
+.qtd-cursor {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 10px 0 5px 0;
+  color: #4e342e;
+  user-select: none;
+}
+
+/* ------------------ ADIÇÕES PARA BOTÃO E MENU DE MÚSICA ------------------ */
+
+/* Botão toggle música - canto superior direito */
+.toggle-musica-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #f4a261;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-musica-btn:hover {
+  background-color: #e07b3e;
+}
+
+/* Menu música escondido por padrão */
+.menu-musica {
+  position: fixed;
+  top: 75px; /* abaixo do botão */
+  right: 20px;
+  background-color: #f7c59f;
+  border-radius: 10px;
+  padding: 15px;
+  width: 200px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+/* Quando ativado, mostra o menu */
+.menu-musica.show {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Área conquistas dentro do ranking */
+.area-conquistas {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 2px solid #d3b89f;
+}
+
+.area-conquistas h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #4e342e;
+  user-select: none;
+}
+
+/* Container dos emojis das conquistas */
+.conquistas-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* Cada emoji conquista */
+.conquista {
+  font-size: 30px;
+  cursor: default;
+  opacity: 0.3; /* apagado quando bloqueado */
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  user-select: none;
+}
+
+/* Quando desbloqueada, fica vibrante */
+.conquista.desbloqueada {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Pode adicionar um efeito hover leve pra destacar conquistas desbloqueadas */
+.conquista.desbloqueada:hover {
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 5px #f4a261);
+}
+
+.conquista-emoji {
+  font-size: 30px;
+  filter: grayscale(100%);
+  transition: filter 0.5s ease;
+  margin-right: 8px;
+}
+
+.conquista-desbloqueada .conquista-emoji {
+  filter: none;
+}
+
+.notificacoes-container {
+  background-color: #f7d358;
+  color: #4e342e;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  opacity: 0.9;
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 0.9; }
+}
+
+.rodape {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f5d9a0;
+  color: #4e342e;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  border-top: 2px solid #e0b66c;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Para telas pequenas, abaixo de 768px (celulares em geral) */
+@media (max-width: 768px) {
+
+  body {
+    padding: 15px;
+    height: auto;
+  }
+
+  .container-principal {
+    flex-direction: column; /* Empilha as áreas em coluna */
+    max-width: 100%;
+    gap: 15px;
+  }
+
+  /* Ranking fica no topo e ocupa toda largura */
+  .area-ranking {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Área do clique fica abaixo do ranking e com largura 100% */
+  .area-clique {
+    width: 100%;
+  }
+
+  /* Ajusta o tamanho do pão para caber melhor na tela */
+  .paocontainer {
+    width: 160px;
+    height: 160px;
+  }
+
+  .paocontainer img {
+    width: 160px;
+    height: auto;
+  }
+
+  .contador {
+    font-size: 20px;
+    padding: 6px 12px;
+  }
+
+  #carrossel {
+    width: 160px;
+    height: 35px;
+  }
+
+  /* Inventário fica abaixo do carrossel com menor espaçamento */
+  .inventario {
+    width: 100%;
+    justify-content: space-around;
+    padding: 6px 8px;
+    margin-top: 8px;
+  }
+
+  .inventario .item {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Painel direito (loja) fica por último em coluna e largura 100% */
+  .painel-direito {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    padding: 15px 10px;
+    border-radius: 8px;
+  }
+
+  .loja button {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .loja h2 {
+    font-size: 16px;
+  }
+
+  .qtd-cursor {
+    font-size: 16px;
+  }
+
+  /* Ajusta botão de música fixo para não atrapalhar */
+  .toggle-musica-btn {
+   margin-right: 190px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  /* Menu música mais compacto */
+  .menu-musica {
+    width: 180px;
+    padding: 10px;
+  }
+}

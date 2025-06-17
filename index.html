@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jogo Clicker do Pão</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="notificacoes-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+
+  <div class="container-principal">
+
+    <!-- Área Ranking à esquerda -->
+    <div class="area-ranking">
+      <h2>Progresso👑</h2>
+      <input id="nomeUsuario" type="text" placeholder="Seu nome" />
+      <button id="btnSalvar">Salvar Pontuação</button>
+
+      <!-- Botão de reset -->
+      <button id="btnResetar">Resetar Progresso</button>
+
+      <ol id="listaRanking"></ol>
+
+      <!-- Área de Conquistas -->
+      <div class="area-conquistas">
+        <h3>Conquistas 🏆</h3>
+        <div id="conquistasContainer" class="conquistas-container">
+          <!-- Emojis das conquistas aparecerão aqui -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Área central: título, pão clicável, contador e carrossel -->
+    <div class="area-clique">
+      <h1>BREADClicker🍞</h1>
+
+      <div class="paocontainer">
+        <img id="pao" src="imagens/pao-sem-findo-removebg-preview.png" alt="Pão para clicar" />
+      </div>
+
+      <div class="contador" id="contador">0</div>
+
+      <div class="qtd-cursor">Cursores: <span id="qtdCursores">0</span></div>
+
+      <div id="carrossel">
+        <div id="cursorTrack" class="cursor-track"></div>
+      </div>
+    </div>
+
+    <!-- Painel direito: Loja -->
+    <div class="painel-direito">
+      <div class="loja">
+        <h2>Auto Clicker <span id="qtdAutoClickerTopo">0</span></h2>
+        <button id="btnAutoClicker">Comprar (50 pães)</button>
+        <div>Quantidade: <span id="qtdAutoClickerLoja">0</span></div>
+        <div class="descricao-loja">
+          Gera pães automaticamente, 1 pão por segundo.
+        </div>
+      </div>
+
+      <div class="loja">
+        <h2>Forno</h2>
+        <button id="btnForno">Comprar (200 pães)</button>
+        <div>Quantidade: <span id="qtdFornoLoja">0</span></div>
+        <div class="descricao-loja">
+          Forno que aumenta a produção de pães, produz 5 pães por segundo.
+        </div>
+      </div>
+
+      <div class="loja">
+        <h2>Padaria</h2>
+        <button id="btnPadaria">Comprar (800 pães)</button>
+        <div>Quantidade: <span id="qtdPadariaLoja">0</span></div>
+        <div class="descricao-loja">
+          Padaria que produz pães em maior escala, gera 20 pães por segundo.
+        </div>
+      </div>
+
+      <div class="loja">
+        <h2>Fábrica</h2>
+        <button id="btnFabrica">Comprar (2500 pães)</button>
+        <div>Quantidade: <span id="qtdFabricaLoja">0</span></div>
+        <div class="descricao-loja">
+          Fábrica com produção industrial, produz 100 pães por segundo.
+        </div>
+      </div>
+
+      <div class="loja">
+        <h2>Império</h2>
+        <button id="btnImperio">Comprar (20000 pães)</button>
+        <div>Quantidade: <span id="qtdImperioLoja">0</span></div>
+        <div class="descricao-loja">
+          Império do pão, produz 1000 pães por segundo.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Botão para mostrar/ocultar o menu de música -->
+  <button id="btnToggleMusica" class="toggle-musica-btn">🎵</button>
+
+  <div id="menuMusica" class="menu-musica">
+    <h3>Música de Fundo</h3>
+    <button id="btnPlayPause">Pause</button>
+    <label for="volumeControle">Volume:</label>
+    <input type="range" id="volumeControle" min="0" max="1" step="0.01" value="0.3" />
+  </div>
+
+  <audio id="musicaFundo" src="audios/stranger-things-124008.mp3" loop></audio>
+  
+  <footer class="rodape">
+  <p>Versão 1.0.0 - Jogo Clicker do Pão</p>
+  </footer>
+
+
+  <script src="script.js"></script>
+  <script src="https://html5.gamemonetize.com/sdk.js"></script>
+  <script>
+    GamemonetizeSDK.Init("4f7541wl2k325krpe4fiytm0kndsrfcx");
+  </script>
+</body>
+</html>
