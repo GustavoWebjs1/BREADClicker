@@ -7,8 +7,24 @@ let qtdFabrica = 0;
 let qtdImperio = 0;
 let producaoTotal = 0; // pães totais produzidos (cliques + auto)
 
+// Variáveis para preços atuais (iniciando nos preços base)
+let precoAutoClickerAtual = 10;
+let precoFornoAtual = 50;
+let precoPadariaAtual = 500;
+let precoFabricaAtual = 2000;
+let precoImperioAtual = 10000;
+
+// ---------------- CLIQUE RÁPIDO ----------------
+let cliquesRapidos = 0;
+const intervaloCliquesRapidos = 5000; // 5 segundos
+let timerCliquesRapidos = null;
+
+// ---------------- TEMPO JOGADO ----------------
+let tempoJogadoSegundos = 0;
+
 // Elementos DOM
 const pao = document.getElementById('pao');
+const somClique = document.getElementById('somClique');
 const contadorElemento = document.getElementById('contador');
 const qtdCursoresElemento = document.getElementById('qtdCursores');
 
@@ -35,12 +51,11 @@ const btnPlayPause = document.getElementById('btnPlayPause');
 const volumeControle = document.getElementById('volumeControle');
 const musicaFundo = document.getElementById('musicaFundo');
 
-
 // Guarda conquistas desbloqueadas (IDs)
 let conquistasDesbloqueadas = new Set();
 
 // Evitar scroll/ações ao pressionar Tab ou Enter
-window.addEventListener('keydown', function(event) {
+window.addEventListener('keydown', function (event) {
   if (event.key === 'Tab' || event.key === 'Enter') {
     event.preventDefault();
   }
@@ -51,8 +66,8 @@ const conquistas = [
   { id: 'pao1', emoji: '🥖', texto: 'Clique no pão pela primeira vez!' },
   { id: 'pao10', emoji: '🍞', texto: 'Produza 10 pães!' },
   { id: 'pao50', emoji: '🥐', texto: 'Produza 50 pães!' },
-  { id: 'pao100', emoji: '🍞', texto: 'Produza 100 pães!' },
-  { id: 'pao200', emoji: '🥖', texto: 'Produza 200 pães!' },
+  { id: 'pao100', emoji: '🥯', texto: 'Produza 100 pães!' },
+  { id: 'pao200', emoji: '🧈', texto: 'Produza 200 pães!' },
   { id: 'pao500', emoji: '🥯', texto: 'Produza 500 pães!' },
   { id: 'pao1000', emoji: '🥨', texto: 'Produza 1.000 pães!' },
   { id: 'pao2500', emoji: '🥖', texto: 'Produza 2.500 pães!' },
@@ -61,6 +76,14 @@ const conquistas = [
   { id: 'pao20000', emoji: '🥖', texto: 'Produza 20.000 pães!' },
   { id: 'pao50000', emoji: '🍞', texto: 'Produza 50.000 pães!' },
   { id: 'pao100000', emoji: '🥐', texto: 'Produza 100.000 pães!' },
+  { id: 'pao250000', emoji: '🥯', texto: 'Produza 250.000 pães no total!' },
+  { id: 'pao500000', emoji: '🍞', texto: 'Produza 500.000 pães no total!' },
+  { id: 'pao1000000', emoji: '🚀', texto: 'Produza 1.000.000 pães no total!' },
+  { id: 'pao3000000', emoji: '🚀', texto: 'Produza 3.000.000 pães no total!' },
+  { id: 'pao6000000', emoji: '🚀', texto: 'Produza 6.000.000 pães no total!' },
+  { id: 'pao8000000', emoji: '🚀', texto: 'Produza 8.000.000 pães no total!' },
+  { id: 'pao10000000', emoji: '🚀', texto: 'Produza 10.000.000 pães no total!' },
+  { id: 'pao20000000', emoji: '🚀', texto: 'Produza 20.000.000 pães no total!' },
 
   { id: 'autoClicker1', emoji: '🤖', texto: 'Compre 1 Auto Clicker!' },
   { id: 'autoClicker5', emoji: '🦾', texto: 'Compre 5 Auto Clickers!' },
@@ -68,10 +91,10 @@ const conquistas = [
   { id: 'autoClicker20', emoji: '🤖', texto: 'Compre 20 Auto Clickers!' },
   { id: 'autoClicker50', emoji: '🦿', texto: 'Compre 50 Auto Clickers!' },
 
-  { id: 'forno1', emoji: '🔥', texto: 'Compre 1 Forno!' },
+  { id: 'forno1', emoji: '♨️', texto: 'Compre 1 Forno!' },
   { id: 'forno3', emoji: '♨️', texto: 'Compre 3 Fornos!' },
-  { id: 'forno5', emoji: '🔥', texto: 'Compre 5 Fornos!' },
-  { id: 'forno10', emoji: '🔥', texto: 'Compre 10 Fornos!' },
+  { id: 'forno5', emoji: '♨️', texto: 'Compre 5 Fornos!' },
+  { id: 'forno10', emoji: '♨️', texto: 'Compre 10 Fornos!' },
   { id: 'forno20', emoji: '♨️', texto: 'Compre 20 Fornos!' },
 
   { id: 'padaria1', emoji: '🏠', texto: 'Compre 1 Padaria!' },
@@ -88,25 +111,15 @@ const conquistas = [
   { id: 'imperio2', emoji: '👑', texto: 'Compre 2 Impérios!' },
   { id: 'imperio3', emoji: '👑', texto: 'Compre 3 Impérios!' },
 
-  { id: 'producao1000', emoji: '⚙️', texto: 'Produza 1.000 pães no total!' },
-  { id: 'producao5000', emoji: '⚙️', texto: 'Produza 5.000 pães no total!' },
-  { id: 'producao10000', emoji: '⚙️', texto: 'Produza 10.000 pães no total!' },
-  { id: 'producao25000', emoji: '🚀', texto: 'Produza 25.000 pães no total!' },
-  { id: 'producao50000', emoji: '🚀', texto: 'Produza 50.000 pães no total!' },
-  { id: 'producao100000', emoji: '🚀', texto: 'Produza 100.000 pães no total!' },
-  { id: 'producao250000', emoji: '🚀', texto: 'Produza 250.000 pães no total!' },
-  { id: 'producao500000', emoji: '🚀', texto: 'Produza 500.000 pães no total!' },
-  { id: 'producao1000000', emoji: '🚀', texto: 'Produza 1.000.000 pães no total!' },
-
   { id: 'fastClicker100', emoji: '⚡', texto: 'Clique 100 vezes rápido!' },
   { id: 'fastClicker500', emoji: '⚡', texto: 'Clique 500 vezes rápido!' },
   { id: 'fastClicker1000', emoji: '⚡', texto: 'Clique 1.000 vezes rápido!' },
 
-  { id: 'milestone1', emoji: '🎉', texto: 'Jogue por 1 minuto!' },
-  { id: 'milestone5', emoji: '🎉', texto: 'Jogue por 5 minutos!' },
-  { id: 'milestone10', emoji: '🎉', texto: 'Jogue por 10 minutos!' },
-  { id: 'milestone30', emoji: '🎉', texto: 'Jogue por 30 minutos!' },
-  { id: 'milestone60', emoji: '🎉', texto: 'Jogue por 1 hora!' },
+  { id: 'milestone1', emoji: '🏅', texto: 'Jogue por 1 minuto!' },
+  { id: 'milestone5', emoji: '🥉', texto: 'Jogue por 5 minutos!' },
+  { id: 'milestone10', emoji: '🥈', texto: 'Jogue por 10 minutos!' },
+  { id: 'milestone30', emoji: '🥇', texto: 'Jogue por 30 minutos!' },
+  { id: 'milestone60', emoji: '🏆', texto: 'Jogue por 1 hora!' },
 ];
 
 // ---------------- FUNÇÕES ----------------
@@ -133,9 +146,16 @@ function atualizarQuantidades() {
   qtdFabricaLoja.textContent = qtdFabrica;
   qtdImperioLoja.textContent = qtdImperio;
   qtdCursoresElemento.textContent = qtdAutoClicker;
-  
 
   atualizarCursorCarrossel(qtdAutoClicker);
+}
+
+function atualizarTextoPrecos() {
+  btnAutoClicker.textContent = `Comprar Auto Clicker (${Math.floor(precoAutoClickerAtual)} pães)`;
+  btnForno.textContent = `Comprar Forno (${Math.floor(precoFornoAtual)} pães)`;
+  btnPadaria.textContent = `Comprar Padaria (${Math.floor(precoPadariaAtual)} pães)`;
+  btnFabrica.textContent = `Comprar Fábrica (${Math.floor(precoFabricaAtual)} pães)`;
+  btnImperio.textContent = `Comprar Império (${Math.floor(precoImperioAtual)} pães)`;
 }
 
 function renderizarLogConquistas() {
@@ -158,7 +178,24 @@ function desbloquearConquista(id) {
     conquistasDesbloqueadas.add(id);
     renderizarLogConquistas();
     salvarJogo();
+    mostrarPopupConquista(id);
   }
+}
+
+// Função para mostrar popup de conquista desbloqueada
+function mostrarPopupConquista(id) {
+  const conquista = conquistas.find(c => c.id === id);
+  if (!conquista) return;
+
+  const popup = document.createElement('div');
+  popup.classList.add('popup-conquista');
+  popup.innerHTML = `<span class="emoji">${conquista.emoji}</span> Conquista desbloqueada! <br> ${conquista.texto}`;
+  document.body.appendChild(popup);
+
+  setTimeout(() => {
+    popup.classList.add('fade-out');
+    setTimeout(() => popup.remove(), 1000);
+  }, 2500);
 }
 
 // Função para verificar as conquistas conforme progresso atual
@@ -177,6 +214,14 @@ function verificarConquistas() {
   if (producaoTotal >= 20000) desbloquearConquista('pao20000');
   if (producaoTotal >= 50000) desbloquearConquista('pao50000');
   if (producaoTotal >= 100000) desbloquearConquista('pao100000');
+  if (producaoTotal >= 250000) desbloquearConquista('pao250000');
+  if (producaoTotal >= 500000) desbloquearConquista('pao500000');
+  if (producaoTotal >= 1000000) desbloquearConquista('pao1000000');
+  if (producaoTotal >= 3000000) desbloquearConquista('pao3000000');
+  if (producaoTotal >= 6000000) desbloquearConquista('pao6000000');
+  if (producaoTotal >= 8000000) desbloquearConquista('pao8000000');
+  if (producaoTotal >= 10000000) desbloquearConquista('pao10000000');
+  if (producaoTotal >= 20000000) desbloquearConquista('pao20000000');
 
   // AutoClicker
   if (qtdAutoClicker >= 1) desbloquearConquista('autoClicker1');
@@ -208,22 +253,38 @@ function verificarConquistas() {
   if (qtdImperio >= 1) desbloquearConquista('imperio1');
   if (qtdImperio >= 2) desbloquearConquista('imperio2');
   if (qtdImperio >= 3) desbloquearConquista('imperio3');
+}
 
-  // Produção total
-  if (producaoTotal >= 1000) desbloquearConquista('producao1000');
-  if (producaoTotal >= 5000) desbloquearConquista('producao5000');
-  if (producaoTotal >= 10000) desbloquearConquista('producao10000');
-  if (producaoTotal >= 25000) desbloquearConquista('producao25000');
-  if (producaoTotal >= 50000) desbloquearConquista('producao50000');
-  if (producaoTotal >= 100000) desbloquearConquista('producao100000');
-  if (producaoTotal >= 250000) desbloquearConquista('producao250000');
-  if (producaoTotal >= 500000) desbloquearConquista('producao500000');
-  if (producaoTotal >= 1000000) desbloquearConquista('producao1000000');
+// ---------------- CLIQUE RÁPIDO ----------------
+function registrarCliqueRapido() {
+  if (!timerCliquesRapidos) {
+    timerCliquesRapidos = setTimeout(() => {
+      verificarConquistaCliquesRapidos();
+      cliquesRapidos = 0;
+      timerCliquesRapidos = null;
+    }, intervaloCliquesRapidos);
+  }
+  cliquesRapidos++;
+}
 
+function verificarConquistaCliquesRapidos() {
+  if (cliquesRapidos >= 100) desbloquearConquista('fastClicker100');
+  if (cliquesRapidos >= 500) desbloquearConquista('fastClicker500');
+  if (cliquesRapidos >= 1000) desbloquearConquista('fastClicker1000');
+}
 
-  
+// ---------------- TEMPO JOGADO ----------------
+function iniciarContagemTempoJogado() {
+  setInterval(() => {
+    tempoJogadoSegundos++;
 
-  // Você pode implementar as conquistas de clique rápido e tempo jogado depois, pois elas precisam de lógica extra.
+    if (tempoJogadoSegundos >= 60) desbloquearConquista('milestone1');
+    if (tempoJogadoSegundos >= 300) desbloquearConquista('milestone5');
+    if (tempoJogadoSegundos >= 600) desbloquearConquista('milestone10');
+    if (tempoJogadoSegundos >= 1800) desbloquearConquista('milestone30');
+    if (tempoJogadoSegundos >= 3600) desbloquearConquista('milestone60');
+
+  }, 1000);
 }
 
 // ---------------- SAVE / LOAD ----------------
@@ -237,32 +298,49 @@ function salvarJogo() {
     qtdImperio,
     producaoTotal,
     conquistasDesbloqueadas: Array.from(conquistasDesbloqueadas),
+    precoAutoClickerAtual,
+    precoFornoAtual,
+    precoPadariaAtual,
+    precoFabricaAtual,
+    precoImperioAtual,
+    tempoJogadoSegundos
   };
-  localStorage.setItem('breadClickerSave', JSON.stringify(saveData));
+  localStorage.setItem('saveGame', JSON.stringify(saveData));
 }
 
 function carregarJogo() {
-  const save = localStorage.getItem('breadClickerSave');
-  if (save) {
-    try {
-      const data = JSON.parse(save);
-      contador = data.contador || 0;
-      qtdAutoClicker = data.qtdAutoClicker || 0;
-      qtdForno = data.qtdForno || 0;
-      qtdPadaria = data.qtdPadaria || 0;
-      qtdFabrica = data.qtdFabrica || 0;
-      qtdImperio = data.qtdImperio || 0;
-      producaoTotal = data.producaoTotal || 0;
-      conquistasDesbloqueadas = new Set(data.conquistasDesbloqueadas || []);
-    } catch (e) {
-      console.error('Erro ao carregar save:', e);
-    }
-  }
-} 
+  const saveData = JSON.parse(localStorage.getItem('saveGame'));
+  if (saveData) {
+    contador = saveData.contador || 0;
+    qtdAutoClicker = saveData.qtdAutoClicker || 0;
+    qtdForno = saveData.qtdForno || 0;
+    qtdPadaria = saveData.qtdPadaria || 0;
+    qtdFabrica = saveData.qtdFabrica || 0;
+    qtdImperio = saveData.qtdImperio || 0;
+    producaoTotal = saveData.producaoTotal || 0;
+    tempoJogadoSegundos = saveData.tempoJogadoSegundos || 0;
 
-// ---------------- RESET ----------------
+    precoAutoClickerAtual = saveData.precoAutoClickerAtual || 10;
+    precoFornoAtual = saveData.precoFornoAtual || 50;
+    precoPadariaAtual = saveData.precoPadariaAtual || 500;
+    precoFabricaAtual = saveData.precoFabricaAtual || 2000;
+    precoImperioAtual = saveData.precoImperioAtual || 10000;
+
+    if (saveData.conquistasDesbloqueadas) {
+      conquistasDesbloqueadas = new Set(saveData.conquistasDesbloqueadas);
+    } else {
+      conquistasDesbloqueadas = new Set();
+    }
+
+    atualizarContador();
+    atualizarQuantidades();
+    atualizarTextoPrecos();
+    renderizarLogConquistas();
+  }
+}
+
 function resetarJogo() {
-  if (confirm('Tem certeza que quer resetar seu progresso? Isso não pode ser desfeito.')) {
+  if (confirm('Tem certeza que deseja resetar seu progresso?')) {
     contador = 0;
     qtdAutoClicker = 0;
     qtdForno = 0;
@@ -270,136 +348,154 @@ function resetarJogo() {
     qtdFabrica = 0;
     qtdImperio = 0;
     producaoTotal = 0;
-    conquistasDesbloqueadas = new Set();
+    tempoJogadoSegundos = 0;
 
-    localStorage.removeItem('breadClickerSave');
+    precoAutoClickerAtual = 10;
+    precoFornoAtual = 50;
+    precoPadariaAtual = 500;
+    precoFabricaAtual = 2000;
+    precoImperioAtual = 10000;
+
+    conquistasDesbloqueadas.clear();
 
     atualizarContador();
     atualizarQuantidades();
+    atualizarTextoPrecos();
     renderizarLogConquistas();
 
-    alert('Progresso resetado com sucesso!');
+    salvarJogo();
   }
 }
 
-btnToggleMusica.addEventListener('click', () => {
-  menuMusica.classList.toggle('show'); // Certifique-se que no CSS '.ativo' mostra/esconde o menu
-});
-
-btnPlayPause.addEventListener('click', () => {
-  if (musicaFundo.paused) {
-    musicaFundo.play();
-    btnPlayPause.textContent = 'Pause';
-  } else {
-    musicaFundo.pause();
-    btnPlayPause.textContent = 'Play';
-  }
-});
-
-volumeControle.addEventListener('input', () => {
-  musicaFundo.volume = volumeControle.value;
-});
-
-
-
-
-// ---------------- EVENTOS ----------------
+// ---------------- FUNÇÃO DE CLIQUE ----------------
 pao.addEventListener('click', () => {
+  somClique.currentTime = 0; // reseta para tocar de novo se clicar rápido
+  somClique.play();
   contador++;
   producaoTotal++;
   atualizarContador();
   verificarConquistas();
+
+  registrarCliqueRapido();
+
   salvarJogo();
 });
 
-btnAutoClicker.addEventListener('click', () => {
-  if (contador >= 50) {
-    contador -= 50;
+// ---------------- COMPRA DAS LOJAS ----------------
+function comprarAutoClicker() {
+  if (contador >= precoAutoClickerAtual) {
+    contador -= precoAutoClickerAtual;
     qtdAutoClicker++;
+    producaoTotal++;
+    precoAutoClickerAtual *= 1.15; // aumenta 15%
+    precoAutoClickerAtual = Math.floor(precoAutoClickerAtual);
+
     atualizarContador();
     atualizarQuantidades();
+    atualizarTextoPrecos();
     verificarConquistas();
     salvarJogo();
   } else {
-    alert('Você não tem pães suficientes!');
+    alert('Você não tem pães suficientes para comprar o Auto Clicker.');
   }
-});
+}
 
-btnForno.addEventListener('click', () => {
-  if (contador >= 200) {
-    contador -= 200;
+function comprarForno() {
+  if (contador >= precoFornoAtual) {
+    contador -= precoFornoAtual;
     qtdForno++;
+    producaoTotal++;
+    precoFornoAtual *= 1.15; // aumenta 15%
+    precoFornoAtual = Math.floor(precoFornoAtual);
+
     atualizarContador();
     atualizarQuantidades();
+    atualizarTextoPrecos();
     verificarConquistas();
     salvarJogo();
   } else {
-    alert('Você não tem pães suficientes!');
+    alert('Você não tem pães suficientes para comprar o Forno.');
   }
-});
+}
 
-btnPadaria.addEventListener('click', () => {
-  if (contador >= 800) {
-    contador -= 800;
+function comprarPadaria() {
+  if (contador >= precoPadariaAtual) {
+    contador -= precoPadariaAtual;
     qtdPadaria++;
+    producaoTotal++;
+    precoPadariaAtual *= 1.15;
+    precoPadariaAtual = Math.floor(precoPadariaAtual);
+
     atualizarContador();
     atualizarQuantidades();
+    atualizarTextoPrecos();
     verificarConquistas();
     salvarJogo();
   } else {
-    alert('Você não tem pães suficientes!');
+    alert('Você não tem pães suficientes para comprar a Padaria.');
   }
-});
+}
 
-btnFabrica.addEventListener('click', () => {
-  if (contador >= 2500) {
-    contador -= 2500;
+function comprarFabrica() {
+  if (contador >= precoFabricaAtual) {
+    contador -= precoFabricaAtual;
     qtdFabrica++;
+    producaoTotal++;
+    precoFabricaAtual *= 1.15;
+    precoFabricaAtual = Math.floor(precoFabricaAtual);
+
     atualizarContador();
     atualizarQuantidades();
+    atualizarTextoPrecos();
     verificarConquistas();
     salvarJogo();
   } else {
-    alert('Você não tem pães suficientes!');
+    alert('Você não tem pães suficientes para comprar a Fábrica.');
   }
-});
+}
 
-btnImperio.addEventListener('click', () => {
-  if (contador >= 20000) {
-    contador -= 20000;
+function comprarImperio() {
+  if (contador >= precoImperioAtual) {
+    contador -= precoImperioAtual;
     qtdImperio++;
+    producaoTotal++;
+    precoImperioAtual *= 1.15;
+    precoImperioAtual = Math.floor(precoImperioAtual);
+
     atualizarContador();
     atualizarQuantidades();
+    atualizarTextoPrecos();
     verificarConquistas();
     salvarJogo();
   } else {
-    alert('Você não tem pães suficientes!');
+    alert('Você não tem pães suficientes para comprar o Império.');
   }
-});
-
-btnResetar.addEventListener('click', () => {
-  resetarJogo();
-});
+}
 
 // ---------------- AUTO CLICKER ----------------
 setInterval(() => {
-  // Cada AutoClicker gera 1 pão por segundo
-  const paesPorSegundo = qtdAutoClicker + qtdForno * 2 + qtdPadaria * 5 + qtdFabrica * 10 + qtdImperio * 20;
-  if (paesPorSegundo > 0) {
-    contador += paesPorSegundo;
-    producaoTotal += paesPorSegundo;
+  if (qtdAutoClicker > 0) {
+    contador += qtdAutoClicker;
+    producaoTotal += qtdAutoClicker;
     atualizarContador();
     verificarConquistas();
     salvarJogo();
   }
 }, 1000);
 
+// ---------------- BOTÕES ----------------
+btnAutoClicker.addEventListener('click', comprarAutoClicker);
+btnForno.addEventListener('click', comprarForno);
+btnPadaria.addEventListener('click', comprarPadaria);
+btnFabrica.addEventListener('click', comprarFabrica);
+btnImperio.addEventListener('click', comprarImperio);
 
+btnResetar.addEventListener('click', resetarJogo);
 
-// ---------------- INICIALIZAÇÃO ----------------
-window.onload = () => {
-  carregarJogo();
-  atualizarContador();
-  atualizarQuantidades();
-  renderizarLogConquistas();
-};
+// ---------------- INÍCIO ----------------
+carregarJogo();
+renderizarLogConquistas();
+atualizarTextoPrecos();
+atualizarQuantidades();
+iniciarContagemTempoJogado();
+

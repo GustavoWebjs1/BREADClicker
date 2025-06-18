@@ -86,6 +86,7 @@ body {
   cursor: pointer;
   user-select: none;
   transition: transform 0.2s ease;
+  
 }
 
 .paocontainer img:hover {
@@ -320,21 +321,20 @@ body {
 .conquista {
   font-size: 30px;
   cursor: default;
-  opacity: 0.3; /* apagado quando bloqueado */
   transition: opacity 0.4s ease, transform 0.3s ease;
   user-select: none;
 }
 
 /* Quando desbloqueada, fica vibrante */
 .conquista.desbloqueada {
-  opacity: 1;
+  opacity: 0;
   transform: scale(1.2);
 }
 
 /* Pode adicionar um efeito hover leve pra destacar conquistas desbloqueadas */
 .conquista.desbloqueada:hover {
   transform: scale(1.3);
-  filter: drop-shadow(0 0 5px #f4a261);
+  filter: drop-shadow(0 0 5px black);
 }
 
 .conquista-emoji {
@@ -377,6 +377,53 @@ body {
   font-size: 14px;
   border-top: 2px solid #e0b66c;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+/* Popup de conquista no meio superior */
+.popup-conquista {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f7d358;
+  color: #4e342e;
+  padding: 15px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  z-index: 10000;
+  opacity: 0;
+  animation: popupFadeInOut 3s forwards;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Emoji da conquista dentro do popup */
+.popup-conquista .emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+/* Animação de entrada e saída */
+@keyframes popupFadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
 }
 
 
@@ -475,5 +522,17 @@ body {
   .menu-musica {
     width: 180px;
     padding: 10px;
+  }
+
+   .popup-conquista {
+    font-size: 14px;
+    padding: 10px 16px;
+    width: 90vw; /* para ocupar quase toda a largura da tela */
+    max-width: 320px; /* limite máximo de largura */
+    box-sizing: border-box;
+  }
+
+  .popup-conquista .emoji {
+    font-size: 20px;
   }
 }
