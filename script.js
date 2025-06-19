@@ -51,6 +51,28 @@ const btnPlayPause = document.getElementById('btnPlayPause');
 const volumeControle = document.getElementById('volumeControle');
 const musicaFundo = document.getElementById('musicaFundo');
 
+// Controle de mostrar/esconder menu música
+btnToggleMusica.addEventListener('click', () => {
+  menuMusica.classList.toggle('show');
+});
+
+// Botão play/pause da música
+btnPlayPause.addEventListener('click', () => {
+  if (musicaFundo.paused) {
+    musicaFundo.play();
+    btnPlayPause.textContent = 'Pausar';
+  } else {
+    musicaFundo.pause();
+    btnPlayPause.textContent = 'Tocar';
+  }
+});
+
+// Controle de volume
+volumeControle.addEventListener('input', () => {
+  musicaFundo.volume = volumeControle.value;
+});
+
+
 // Guarda conquistas desbloqueadas (IDs)
 let conquistasDesbloqueadas = new Set();
 
@@ -123,6 +145,10 @@ const conquistas = [
 ];
 
 // ---------------- FUNÇÕES ----------------
+
+
+
+
 function atualizarContador() {
   contadorElemento.textContent = contador;
 }
@@ -182,6 +208,14 @@ function desbloquearConquista(id) {
   }
 }
 
+function exibirAnuncio() {
+  if (typeof GamemonetizeSDK !== 'undefined') {
+    GamemonetizeSDK.ShowInterstitial();
+  }
+}
+
+
+
 // Função para mostrar popup de conquista desbloqueada
 function mostrarPopupConquista(id) {
   const conquista = conquistas.find(c => c.id === id);
@@ -202,26 +236,26 @@ function mostrarPopupConquista(id) {
 function verificarConquistas() {
   // Conquistas de clique
   if (contador >= 1) desbloquearConquista('pao1');
-  if (producaoTotal >= 10) desbloquearConquista('pao10');
-  if (producaoTotal >= 50) desbloquearConquista('pao50');
-  if (producaoTotal >= 100) desbloquearConquista('pao100');
-  if (producaoTotal >= 200) desbloquearConquista('pao200');
-  if (producaoTotal >= 500) desbloquearConquista('pao500');
-  if (producaoTotal >= 1000) desbloquearConquista('pao1000');
-  if (producaoTotal >= 2500) desbloquearConquista('pao2500');
-  if (producaoTotal >= 5000) desbloquearConquista('pao5000');
-  if (producaoTotal >= 10000) desbloquearConquista('pao10000');
-  if (producaoTotal >= 20000) desbloquearConquista('pao20000');
-  if (producaoTotal >= 50000) desbloquearConquista('pao50000');
-  if (producaoTotal >= 100000) desbloquearConquista('pao100000');
-  if (producaoTotal >= 250000) desbloquearConquista('pao250000');
-  if (producaoTotal >= 500000) desbloquearConquista('pao500000');
-  if (producaoTotal >= 1000000) desbloquearConquista('pao1000000');
-  if (producaoTotal >= 3000000) desbloquearConquista('pao3000000');
-  if (producaoTotal >= 6000000) desbloquearConquista('pao6000000');
-  if (producaoTotal >= 8000000) desbloquearConquista('pao8000000');
-  if (producaoTotal >= 10000000) desbloquearConquista('pao10000000');
-  if (producaoTotal >= 20000000) desbloquearConquista('pao20000000');
+  if (contador>= 10) desbloquearConquista('pao10');
+  if (contador >= 50) desbloquearConquista('pao50');
+  if (contador >= 100) desbloquearConquista('pao100');
+  if (contador >= 200) desbloquearConquista('pao200');
+  if (contador >= 500) desbloquearConquista('pao500');
+  if (contador >= 1000) desbloquearConquista('pao1000');
+  if (contador >= 2500) desbloquearConquista('pao2500');
+  if (contador >= 5000) desbloquearConquista('pao5000');
+  if (contador >= 10000) desbloquearConquista('pao10000');
+  if (contador >= 20000) desbloquearConquista('pao20000');
+  if (contador >= 50000) desbloquearConquista('pao50000');
+  if (contador >= 100000) desbloquearConquista('pao100000');
+  if (contador >= 250000) desbloquearConquista('pao250000');
+  if (contador >= 500000) desbloquearConquista('pao500000');
+  if (contador >= 1000000) desbloquearConquista('pao1000000');
+  if (contador >= 3000000) desbloquearConquista('pao3000000');
+  if (contador >= 6000000) desbloquearConquista('pao6000000');
+  if (contador >= 8000000) desbloquearConquista('pao8000000');
+  if (contador >= 10000000) desbloquearConquista('pao10000000');
+  if (contador >= 20000000) desbloquearConquista('pao20000000');
 
   // AutoClicker
   if (qtdAutoClicker >= 1) desbloquearConquista('autoClicker1');
@@ -278,14 +312,30 @@ function iniciarContagemTempoJogado() {
   setInterval(() => {
     tempoJogadoSegundos++;
 
-    if (tempoJogadoSegundos >= 60) desbloquearConquista('milestone1');
-    if (tempoJogadoSegundos >= 300) desbloquearConquista('milestone5');
-    if (tempoJogadoSegundos >= 600) desbloquearConquista('milestone10');
-    if (tempoJogadoSegundos >= 1800) desbloquearConquista('milestone30');
-    if (tempoJogadoSegundos >= 3600) desbloquearConquista('milestone60');
+    if (tempoJogadoSegundos === 60) {
+      desbloquearConquista('milestone1');
+      exibirAnuncio();
+    }
+    if (tempoJogadoSegundos === 300) {
+      desbloquearConquista('milestone5');
+      exibirAnuncio();
+    }
+    if (tempoJogadoSegundos === 600) {
+      desbloquearConquista('milestone10');
+      exibirAnuncio();
+    }
+    if (tempoJogadoSegundos === 1800) {
+      desbloquearConquista('milestone30');
+      exibirAnuncio();
+    }
+    if (tempoJogadoSegundos === 3600) {
+      desbloquearConquista('milestone60');
+      exibirAnuncio();
+    }
 
-  }, 1000);
+  }, 1000); // Conta 1 segundo
 }
+
 
 // ---------------- SAVE / LOAD ----------------
 function salvarJogo() {
@@ -367,10 +417,16 @@ function resetarJogo() {
   }
 }
 
+
+
+
 // ---------------- FUNÇÃO DE CLIQUE ----------------
 pao.addEventListener('click', () => {
-  somClique.currentTime = 0; // reseta para tocar de novo se clicar rápido
+  // Tocar som do clique
+  somClique.currentTime = 0;
   somClique.play();
+
+ 
   contador++;
   producaoTotal++;
   atualizarContador();
@@ -386,7 +442,6 @@ function comprarAutoClicker() {
   if (contador >= precoAutoClickerAtual) {
     contador -= precoAutoClickerAtual;
     qtdAutoClicker++;
-    producaoTotal++;
     precoAutoClickerAtual *= 1.15; // aumenta 15%
     precoAutoClickerAtual = Math.floor(precoAutoClickerAtual);
 
@@ -404,7 +459,6 @@ function comprarForno() {
   if (contador >= precoFornoAtual) {
     contador -= precoFornoAtual;
     qtdForno++;
-    producaoTotal++;
     precoFornoAtual *= 1.15; // aumenta 15%
     precoFornoAtual = Math.floor(precoFornoAtual);
 
@@ -422,7 +476,6 @@ function comprarPadaria() {
   if (contador >= precoPadariaAtual) {
     contador -= precoPadariaAtual;
     qtdPadaria++;
-    producaoTotal++;
     precoPadariaAtual *= 1.15;
     precoPadariaAtual = Math.floor(precoPadariaAtual);
 
@@ -440,7 +493,6 @@ function comprarFabrica() {
   if (contador >= precoFabricaAtual) {
     contador -= precoFabricaAtual;
     qtdFabrica++;
-    producaoTotal++;
     precoFabricaAtual *= 1.15;
     precoFabricaAtual = Math.floor(precoFabricaAtual);
 
@@ -458,7 +510,6 @@ function comprarImperio() {
   if (contador >= precoImperioAtual) {
     contador -= precoImperioAtual;
     qtdImperio++;
-    producaoTotal++;
     precoImperioAtual *= 1.15;
     precoImperioAtual = Math.floor(precoImperioAtual);
 
