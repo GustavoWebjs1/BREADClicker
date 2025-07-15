@@ -14,6 +14,14 @@ let precoPadariaAtual = 500;
 let precoFabricaAtual = 2000;
 let precoImperioAtual = 10000;
 
+const producaoAutoClicker = 1;
+const producaoForno = 5;
+const producaoPadaria = 20;
+const producaoFabrica = 50;
+const producaoImperio = 150;
+
+let pps = 0; // pães por segundo total
+
 // ---------------- CLIQUE RÁPIDO ----------------
 let cliquesRapidos = 0;
 const intervaloCliquesRapidos = 5000; // 5 segundos
@@ -51,12 +59,13 @@ const btnPlayPause = document.getElementById('btnPlayPause');
 const volumeControle = document.getElementById('volumeControle');
 const musicaFundo = document.getElementById('musicaFundo');
 
+const ppsElemento = document.getElementById('pps');
+
 // Controle de mostrar/esconder menu música
 btnToggleMusica.addEventListener('click', () => {
   menuMusica.classList.toggle('show');
 });
 
-// Botão play/pause da música
 btnPlayPause.addEventListener('click', () => {
   if (musicaFundo.paused) {
     musicaFundo.play();
@@ -67,16 +76,12 @@ btnPlayPause.addEventListener('click', () => {
   }
 });
 
-// Controle de volume
 volumeControle.addEventListener('input', () => {
   musicaFundo.volume = volumeControle.value;
 });
 
-
-// Guarda conquistas desbloqueadas (IDs)
 let conquistasDesbloqueadas = new Set();
 
-// Evitar scroll/ações ao pressionar Tab ou Enter
 window.addEventListener('keydown', function (event) {
   if (event.key === 'Tab' || event.key === 'Enter') {
     event.preventDefault();
@@ -146,17 +151,13 @@ const conquistas = [
 
 // ---------------- FUNÇÕES ----------------
 
-
-
-
 function atualizarContador() {
   contadorElemento.textContent = contador;
 }
 
 function atualizarCursorCarrossel(qtd) {
   const cursorTrack = document.getElementById('cursorTrack');
-  cursorTrack.innerHTML = ''; // limpa antes
-
+  cursorTrack.innerHTML = '';
   for (let i = 0; i < qtd; i++) {
     const cursor = document.createElement('div');
     cursor.classList.add('cursor-icon');
@@ -172,7 +173,6 @@ function atualizarQuantidades() {
   qtdFabricaLoja.textContent = qtdFabrica;
   qtdImperioLoja.textContent = qtdImperio;
   qtdCursoresElemento.textContent = qtdAutoClicker;
-
   atualizarCursorCarrossel(qtdAutoClicker);
 }
 
@@ -182,6 +182,18 @@ function atualizarTextoPrecos() {
   btnPadaria.textContent = `Comprar Padaria (${Math.floor(precoPadariaAtual)} pães)`;
   btnFabrica.textContent = `Comprar Fábrica (${Math.floor(precoFabricaAtual)} pães)`;
   btnImperio.textContent = `Comprar Império (${Math.floor(precoImperioAtual)} pães)`;
+}
+
+function atualizarPPS() {
+  pps = (qtdAutoClicker * producaoAutoClicker) +
+        (qtdForno * producaoForno) +
+        (qtdPadaria * producaoPadaria) +
+        (qtdFabrica * producaoFabrica) +
+        (qtdImperio * producaoImperio);
+
+  if (ppsElemento) {
+    ppsElemento.textContent = `Pães por segundo: ${pps}`;
+  }
 }
 
 function renderizarLogConquistas() {
@@ -213,8 +225,6 @@ function exibirAnuncio() {
     GamemonetizeSDK.ShowInterstitial();
   }
 }
-
-
 
 // Função para mostrar popup de conquista desbloqueada
 function mostrarPopupConquista(id) {
@@ -307,144 +317,16 @@ function verificarConquistaCliquesRapidos() {
   if (cliquesRapidos >= 1000) desbloquearConquista('fastClicker1000');
 }
 
-// ---------------- TEMPO JOGADO ----------------
-function iniciarContagemTempoJogado() {
-  setInterval(() => {
-    tempoJogadoSegundos++;
+// ---------------- FUNÇÕES DE COMPRA ----------------
 
-    if (tempoJogadoSegundos === 60) {
-      desbloquearConquista('milestone1');
-      exibirAnuncio();
-    }
-    if (tempoJogadoSegundos === 300) {
-      desbloquearConquista('milestone5');
-      exibirAnuncio();
-    }
-    if (tempoJogadoSegundos === 600) {
-      desbloquearConquista('milestone10');
-      exibirAnuncio();
-    }
-    if (tempoJogadoSegundos === 1800) {
-      desbloquearConquista('milestone30');
-      exibirAnuncio();
-    }
-    if (tempoJogadoSegundos === 3600) {
-      desbloquearConquista('milestone60');
-      exibirAnuncio();
-    }
-
-  }, 1000); // Conta 1 segundo
-}
-
-
-// ---------------- SAVE / LOAD ----------------
-function salvarJogo() {
-  const saveData = {
-    contador,
-    qtdAutoClicker,
-    qtdForno,
-    qtdPadaria,
-    qtdFabrica,
-    qtdImperio,
-    producaoTotal,
-    conquistasDesbloqueadas: Array.from(conquistasDesbloqueadas),
-    precoAutoClickerAtual,
-    precoFornoAtual,
-    precoPadariaAtual,
-    precoFabricaAtual,
-    precoImperioAtual,
-    tempoJogadoSegundos
-  };
-  localStorage.setItem('saveGame', JSON.stringify(saveData));
-}
-
-function carregarJogo() {
-  const saveData = JSON.parse(localStorage.getItem('saveGame'));
-  if (saveData) {
-    contador = saveData.contador || 0;
-    qtdAutoClicker = saveData.qtdAutoClicker || 0;
-    qtdForno = saveData.qtdForno || 0;
-    qtdPadaria = saveData.qtdPadaria || 0;
-    qtdFabrica = saveData.qtdFabrica || 0;
-    qtdImperio = saveData.qtdImperio || 0;
-    producaoTotal = saveData.producaoTotal || 0;
-    tempoJogadoSegundos = saveData.tempoJogadoSegundos || 0;
-
-    precoAutoClickerAtual = saveData.precoAutoClickerAtual || 10;
-    precoFornoAtual = saveData.precoFornoAtual || 50;
-    precoPadariaAtual = saveData.precoPadariaAtual || 500;
-    precoFabricaAtual = saveData.precoFabricaAtual || 2000;
-    precoImperioAtual = saveData.precoImperioAtual || 10000;
-
-    if (saveData.conquistasDesbloqueadas) {
-      conquistasDesbloqueadas = new Set(saveData.conquistasDesbloqueadas);
-    } else {
-      conquistasDesbloqueadas = new Set();
-    }
-
-    atualizarContador();
-    atualizarQuantidades();
-    atualizarTextoPrecos();
-    renderizarLogConquistas();
-  }
-}
-
-function resetarJogo() {
-  if (confirm('Tem certeza que deseja resetar seu progresso?')) {
-    contador = 0;
-    qtdAutoClicker = 0;
-    qtdForno = 0;
-    qtdPadaria = 0;
-    qtdFabrica = 0;
-    qtdImperio = 0;
-    producaoTotal = 0;
-    tempoJogadoSegundos = 0;
-
-    precoAutoClickerAtual = 10;
-    precoFornoAtual = 50;
-    precoPadariaAtual = 500;
-    precoFabricaAtual = 2000;
-    precoImperioAtual = 10000;
-
-    conquistasDesbloqueadas.clear();
-
-    atualizarContador();
-    atualizarQuantidades();
-    atualizarTextoPrecos();
-    renderizarLogConquistas();
-
-    salvarJogo();
-  }
-}
-
-
-
-
-// ---------------- FUNÇÃO DE CLIQUE ----------------
-pao.addEventListener('click', () => {
-  // Tocar som do clique
-  somClique.currentTime = 0;
-  somClique.play();
-
- 
-  contador++;
-  producaoTotal++;
-  atualizarContador();
-  verificarConquistas();
-
-  registrarCliqueRapido();
-
-  salvarJogo();
-});
-
-// ---------------- COMPRA DAS LOJAS ----------------
 function comprarAutoClicker() {
   if (contador >= precoAutoClickerAtual) {
     contador -= precoAutoClickerAtual;
     qtdAutoClicker++;
-    precoAutoClickerAtual *= 1.15; // aumenta 15%
+    precoAutoClickerAtual *= 1.15;
     precoAutoClickerAtual = Math.floor(precoAutoClickerAtual);
 
+    atualizarPPS();
     atualizarContador();
     atualizarQuantidades();
     atualizarTextoPrecos();
@@ -459,9 +341,10 @@ function comprarForno() {
   if (contador >= precoFornoAtual) {
     contador -= precoFornoAtual;
     qtdForno++;
-    precoFornoAtual *= 1.15; // aumenta 15%
+    precoFornoAtual *= 1.15;
     precoFornoAtual = Math.floor(precoFornoAtual);
 
+    atualizarPPS();
     atualizarContador();
     atualizarQuantidades();
     atualizarTextoPrecos();
@@ -479,6 +362,7 @@ function comprarPadaria() {
     precoPadariaAtual *= 1.15;
     precoPadariaAtual = Math.floor(precoPadariaAtual);
 
+    atualizarPPS();
     atualizarContador();
     atualizarQuantidades();
     atualizarTextoPrecos();
@@ -496,6 +380,7 @@ function comprarFabrica() {
     precoFabricaAtual *= 1.15;
     precoFabricaAtual = Math.floor(precoFabricaAtual);
 
+    atualizarPPS();
     atualizarContador();
     atualizarQuantidades();
     atualizarTextoPrecos();
@@ -513,6 +398,7 @@ function comprarImperio() {
     precoImperioAtual *= 1.15;
     precoImperioAtual = Math.floor(precoImperioAtual);
 
+    atualizarPPS();
     atualizarContador();
     atualizarQuantidades();
     atualizarTextoPrecos();
@@ -523,30 +409,158 @@ function comprarImperio() {
   }
 }
 
-// ---------------- AUTO CLICKER ----------------
-setInterval(() => {
-  if (qtdAutoClicker > 0) {
-    contador += qtdAutoClicker;
-    producaoTotal += qtdAutoClicker;
-    atualizarContador();
-    verificarConquistas();
-    salvarJogo();
-  }
-}, 1000);
+// ---------------- EVENTOS ----------------
 
-// ---------------- BOTÕES ----------------
+// Clique no pão
+pao.addEventListener('click', () => {
+  contador++;
+  producaoTotal++;
+  atualizarContador();
+  somClique.currentTime = 0;
+  somClique.play();
+  registrarCliqueRapido();
+  verificarConquistas();
+  salvarJogo();
+});
+
 btnAutoClicker.addEventListener('click', comprarAutoClicker);
 btnForno.addEventListener('click', comprarForno);
 btnPadaria.addEventListener('click', comprarPadaria);
 btnFabrica.addEventListener('click', comprarFabrica);
 btnImperio.addEventListener('click', comprarImperio);
 
-btnResetar.addEventListener('click', resetarJogo);
+btnResetar.addEventListener('click', () => {
+  if (confirm('Tem certeza que deseja resetar o jogo?')) {
+    resetarJogo();
+  }
+});
 
-// ---------------- INÍCIO ----------------
-carregarJogo();
-renderizarLogConquistas();
-atualizarTextoPrecos();
-atualizarQuantidades();
-iniciarContagemTempoJogado();
+window.addEventListener('load', () => {
+  carregarJogo();
+  musicaFundo.volume = 0.5;
+  musicaFundo.loop = true;
+  musicaFundo.play().catch(() => {});
+  atualizarTempoExibicao();
 
+  setInterval(() => {
+    if (pps > 0) {
+      contador += pps;
+      producaoTotal += pps;
+      atualizarContador();
+      verificarConquistas();
+      salvarJogo();
+    }
+  }, 1000);
+
+  setInterval(() => {
+    tempoJogadoSegundos++;
+    verificarConquistasTempo();
+    salvarJogo();
+  }, 1000);
+});
+function verificarConquistasTempo() {
+  if (tempoJogadoSegundos >= 60) desbloquearConquista('milestone1');
+  if (tempoJogadoSegundos >= 300) desbloquearConquista('milestone5');
+  if (tempoJogadoSegundos >= 600) desbloquearConquista('milestone10');
+  if (tempoJogadoSegundos >= 1800) desbloquearConquista('milestone30');
+  if (tempoJogadoSegundos >= 3600) desbloquearConquista('milestone60');
+}
+
+// ---------------- SALVAR E CARREGAR ----------------
+
+function salvarJogo() {
+  const dados = {
+    contador,
+    qtdAutoClicker,
+    qtdForno,
+    qtdPadaria,
+    qtdFabrica,
+    qtdImperio,
+    precoAutoClickerAtual,
+    precoFornoAtual,
+    precoPadariaAtual,
+    precoFabricaAtual,
+    precoImperioAtual,
+    producaoTotal,
+    conquistasDesbloqueadas: Array.from(conquistasDesbloqueadas),
+    tempoJogadoSegundos,
+  };
+
+  localStorage.setItem('paoClickerSave', JSON.stringify(dados));
+}
+
+function carregarJogo() {
+  const dadosSalvos = localStorage.getItem('paoClickerSave');
+  if (dadosSalvos) {
+    const dados = JSON.parse(dadosSalvos);
+    contador = dados.contador || 0;
+    qtdAutoClicker = dados.qtdAutoClicker || 0;
+    qtdForno = dados.qtdForno || 0;
+    qtdPadaria = dados.qtdPadaria || 0;
+    qtdFabrica = dados.qtdFabrica || 0;
+    qtdImperio = dados.qtdImperio || 0;
+    precoAutoClickerAtual = dados.precoAutoClickerAtual || 10;
+    precoFornoAtual = dados.precoFornoAtual || 50;
+    precoPadariaAtual = dados.precoPadariaAtual || 500;
+    precoFabricaAtual = dados.precoFabricaAtual || 2000;
+    precoImperioAtual = dados.precoImperioAtual || 10000;
+    producaoTotal = dados.producaoTotal || 0;
+    conquistasDesbloqueadas = new Set(dados.conquistasDesbloqueadas || []);
+    tempoJogadoSegundos = dados.tempoJogadoSegundos || 0;
+  }
+
+  atualizarContador();
+  atualizarQuantidades();
+  atualizarTextoPrecos();
+  renderizarLogConquistas();
+  atualizarPPS();
+  atualizarTempoExibicao();
+}
+
+function resetarJogo() {
+  contador = 0;
+  qtdAutoClicker = 0;
+  qtdForno = 0;
+  qtdPadaria = 0;
+  qtdFabrica = 0;
+  qtdImperio = 0;
+  precoAutoClickerAtual = 10;
+  precoFornoAtual = 50;
+  precoPadariaAtual = 500;
+  precoFabricaAtual = 2000;
+  precoImperioAtual = 10000;
+  producaoTotal = 0;
+  conquistasDesbloqueadas = new Set();
+  tempoJogadoSegundos = 0;
+
+  atualizarContador();
+  atualizarQuantidades();
+  atualizarTextoPrecos();
+  renderizarLogConquistas();
+  atualizarPPS();
+  atualizarTempoExibicao();
+  salvarJogo();
+}
+
+function atualizarTempoExibicao() {
+  const tempoElemento = document.getElementById('tempoJogado');
+  if (!tempoElemento) return;
+
+  let segundos = tempoJogadoSegundos;
+  const horas = Math.floor(segundos / 3600);
+  segundos %= 3600;
+  const minutos = Math.floor(segundos / 60);
+  segundos %= 60;
+
+  tempoElemento.textContent = `Tempo jogado: ${horas}h ${minutos}m ${segundos}s`;
+}
+
+// ---------------- INICIALIZAÇÃO ----------------
+
+window.addEventListener('load', () => {
+  carregarJogo();
+  musicaFundo.volume = 0.5; // volume padrão
+  musicaFundo.loop = true;
+  musicaFundo.play().catch(() => {}); // tenta tocar a música (alguns browsers bloqueiam auto play)
+  atualizarTempoExibicao();
+});
